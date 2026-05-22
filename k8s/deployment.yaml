@@ -33,4 +33,4 @@ spec:
     - protocol: TCP
       port: 80         # The port the service listens on inside the cluster
       targetPort: 3000 # The port your Node.js app is actually running on
-      nodePort: 30001  # Open your browser at http://localhost:30001
+      nodePort: 30001  # Open your browser at http://localhost:30001  o
