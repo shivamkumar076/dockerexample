@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app-deployment
+  labels:
+    app: node-app
+spec:
+  replicas: 2 # This tells K8s to always keep 2 copies of your app running!
+  selector:
+    matchLabels:
+      app: node-app
+  template:
+    metadata:
+      labels:
+        app: node-app
+    spec:
+      containers:
+      - name: node-container
+        image: my-node-app:v1
+        imagePullPolicy: Never # Forces K8s to look locally instead of downloading from Docker Hub
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-app-service
+spec:
+  type: NodePort # This exposes the port to your local host machine
+  selector:
+    app: node-app
+  ports:
+    - protocol: TCP
+      port: 80         # The port the service listens on inside the cluster
+      targetPort: 3000 # The port your Node.js app is actually running on
+      nodePort: 30001  # Open your browser at http://localhost:30001
