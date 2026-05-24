@@ -5,7 +5,7 @@ metadata:
   labels:
     app: node-app
 spec:
-  replicas: 2 # This tells K8s to always keep 2 copies of your app running!
+  replicas: 2 
   selector:
     matchLabels:
       app: node-app
@@ -16,21 +16,29 @@ spec:
     spec:
       containers:
       - name: node-container
-        image: node-app
-        imagePullPolicy: Never # Forces K8s to look locally instead of downloading from Docker Hub
+        # 1. MUST ADD YOUR DOCKER HUB USERNAME HERE
+        image: yourdockerhubusername/node-app:latest 
+        # 2. Changed so ArgoCD can pull the new images from Docker Hub
+        imagePullPolicy: Always 
         ports:
         - containerPort: 3000
+        env:
+        # 3. Tells your Node app how to find the Mongo service inside Minikube
+        - name: MONGO_URL 
+          value: "mongodb://mongo-service:27017/mydatabase"
+        - name: PORT
+          value: "3000"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: node-app-service
 spec:
-  type: NodePort # This exposes the port to your local host machine
+  type: NodePort 
   selector:
     app: node-app
   ports:
     - protocol: TCP
-      port: 80         # The port the service listens on inside the cluster
-      targetPort: 3000 # The port your Node.js app is actually running on
-      nodePort: 30001  # Open your browser at http://localhost:30001  o
+      port: 80         
+      targetPort: 3000 
+      nodePort: 30001
